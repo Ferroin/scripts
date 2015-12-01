@@ -69,7 +69,7 @@ def compute_dps(stats):
             # Here, we compute how long it takes to empty the magazine, and
             # factor in reload time (which is functionally a period of 0 DPS)
             magtime = stats.magazine / stats.firerate
-            avgdps = ((avgdps * magtime) - (avgdps * stats.reload)) / (magtime + stats.reload)
+            avgdps = avgdps / ((stats.reload / magtime) + 1)
     else:
         # In this case, we've been told to ignore fire rate.  If we have the
         # reload time, the DPS is the per-shot times the magazine size, divided
@@ -91,8 +91,8 @@ def main():
     parser.add_argument('--reload', help='Reload speed, in seconds, specify 0 here for stuff that does not need reloaded', type=float)
     parser.add_argument('--multishot', help='Number of individual projectiles.  Damage is assumed to be divided evenly between them.  Check the warframe wiki for a list of pellet counts for shotguns.  For other weapons with a single projectile, this should be the percentage multishot bonus divided by 100, plus 1.', type=float, default=1)
     args = parser.parse_args()
-    if (args.reload and not args.magazine) or \
-       (args.magazine and not args.reload):
+    if ((args.reload and not args.magazine) or \
+       (args.magazine and not args.reload)):
         print('If you specify either magazine size or reload speed, you must specify the other.')
         exit(1)
     if (args.critchance > 1):
