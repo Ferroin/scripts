@@ -17,7 +17,6 @@ and get a result, but that is not something that is availible yet.
 For info on how to use this, run it without any arguments.
 
 TODO:
-    * Add support for handling weapons with crit chance > 100
     * Add support for handling weapons where ammo consumption doesn't
       equate to damage rate (Glaxion and friends).
 
@@ -57,6 +56,11 @@ def compute_dps(stats):
 
        stats should be a dict similar to what is returned by
        argparse.ArgumentParser.parse_args()'''
+    # This checks for red crit values, and adjusts numbers accordingly
+    if stats.critchance > 1:
+        stats.critchance = stats.critchance - 1
+        stats.dmg = stats.dmg * stats.critmult
+        stats.critmult = 2
     # Relatively simple math here for average per-shot damage, we take the
     # weighted average of the crit and non-crit damage.
     avgperpellet = ((stats.dmg / stats.multishot) * (1 - stats.critchance)) + ((stats.dmg / stats.multishot) * stats.critchance * stats.critmult)
@@ -95,13 +99,10 @@ def main():
        (args.magazine and not args.reload)):
         print('If you specify either magazine size or reload speed, you must specify the other.')
         exit(1)
-    if (args.critchance > 1):
-        print('W currently can\'t compute DPS involving red crits.')
-        exit(1)
     result = compute_dps(args)
-    print('Average per-bullet damage: ' + str(result[0]))
-    print('Average per-shot damage; ' + str(result[1]))
-    print('Average DPS: ' + str(result[2]))
+    print('Average per-bullet damage: {0:.2F}'.format(result[0]))
+    print('Average per-shot damage; {0:.2F}'.format(result[1]))
+    print('Average DPS: {0:.2F}'.format(result[2]))
     print('Results do not factor in resistances, bonuses, or armor')
     exit(0)
 
