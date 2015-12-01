@@ -18,9 +18,8 @@ For info on how to use this, run it without any arguments.
 
 TODO:
     * Add support for handling weapons with crit chance > 100
-    * Figure out some way to account for multishot properly (because of
-      a lack of this, calculations for shotguns are going to be
-      inaccurate).
+    * Add support for handling weapons where ammo consumption doesn't
+      equate to damage rate (Glaxion and friends).
 
 Copyright (c) 2015, Austin S. Hemmelgarn
 All rights reserved.
@@ -53,8 +52,6 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.'''
 
-from os import exit
-
 def compute_dps(stats):
     '''Compute the average DPS of a weapon with the given stats.
 
@@ -62,12 +59,13 @@ def compute_dps(stats):
        argparse.ArgumentParser.parse_args()'''
     # Relatively simple math here for average per-shot damage, we take the
     # weighted average of the crit and non-crit damage.
-    avgpershot = (stats.dmg * (1 - stats.critchance)) + (stats.dmg * stats.critchance * stats.critmult)
+    avgperpellet = ((stats.dmg / stats.multishot) * (1 - stats.critchance)) + ((stats.dmg / stats.multishot) * stats.critchance * stats.critmult)
+    avgpershot = avgperpellet * stats.multishot
     if stats.firerate > 0:
         # If we didn't get the reload time and magazine size, then the average
         # DPS is just the per-shot times the firerate
         avgdps = avgpershot * stats.firerate
-        if (stats.reload > 0) and stats.magazine:
+        if (stats.reload and stats.reload > 0) and stats.magazine:
             # Here, we compute how long it takes to empty the magazine, and
             # factor in reload time (which is functionally a period of 0 DPS)
             magtime = stats.magazine / stats.firerate
@@ -76,32 +74,34 @@ def compute_dps(stats):
         # In this case, we've been told to ignore fire rate.  If we have the
         # reload time, the DPS is the per-shot times the magazine size, divided
         # by the reload time, otherwise it's jus tthe per-shot damage.
-        if stats.reload > 0:
+        if stats.reload and stats.reload > 0:
             avgdps = avgpershot * stats.magazine / stats.reload
         else:
             avgdps = avgpershot
-    return (avgpershot, avgdps)
+    return (avgperpellet, avgpershot, avgdps)
 
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='Comput a weapon\'s average DPS')
-    parser.add_argument('--dmg', '--damage', help='Base damage vaule.  This is the sum of the individual damage types for the weapon', type='float', required=True)
-    parser.add_argument('--critchance', help='Base crit chance, expressed as faction between 0 and 1 (divide the percentage by 100 to get this)', type='float', required=True)
-    parser.add_argument('--critmult', help='Critical dmage multiplier', type='float', required=True)
-    parser.add_argument('--firerate', help='Fire rate in shots per second, specify 0 here for weapons like the Tigris that are unaffected by fire rate', type='float', required=True)
-    parser.add_argument('--magazine', help='Magazine size', type='int')
-    parser.add_argument('--reload', help='Reload speed, in seconds, specify 0 here for stuff that does not need reloaded', type='float')
+    parser.add_argument('--dmg', '--damage', help='Base damage vaule.  This is the sum of the individual damage types for the weapon', type=float, required=True)
+    parser.add_argument('--critchance', help='Base crit chance, expressed as faction between 0 and 1 (divide the percentage by 100 to get this)', type=float, required=True)
+    parser.add_argument('--critmult', help='Critical dmage multiplier', type=float, required=True)
+    parser.add_argument('--firerate', help='Fire rate in shots per second, specify 0 here for weapons like the Tigris that are unaffected by fire rate', type=float, required=True)
+    parser.add_argument('--magazine', help='Magazine size', type=int)
+    parser.add_argument('--reload', help='Reload speed, in seconds, specify 0 here for stuff that does not need reloaded', type=float)
+    parser.add_argument('--multishot', help='Number of individual projectiles.  Damage is assumed to be divided evenly between them.  Check the warframe wiki for a list of pellet counts for shotguns.  For other weapons with a single projectile, this should be the percentage multishot bonus divided by 100, plus 1.', type=float, default=1)
     args = parser.parse_args()
-    if (stats.reload and not stats.magazine) or
-       (stats.magazine and not stats.reload):
+    if (args.reload and not args.magazine) or \
+       (args.magazine and not args.reload):
         print('If you specify either magazine size or reload speed, you must specify the other.')
         exit(1)
-    if (stats.critchance > 1):
+    if (args.critchance > 1):
         print('W currently can\'t compute DPS involving red crits.')
         exit(1)
     result = compute_dps(args)
-    print('Average per-shot damage; ' + result[0])
-    print('Average DPS: ' + result[1])
+    print('Average per-bullet damage: ' + str(result[0]))
+    print('Average per-shot damage; ' + str(result[1]))
+    print('Average DPS: ' + str(result[2]))
     print('Results do not factor in resistances, bonuses, or armor')
     exit(0)
 
