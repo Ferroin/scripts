@@ -2,7 +2,7 @@
 '''
 wfdps.py: A script to compute average DPS for a weapon in Warframe
 
-THis is a script I wrote to compute the average raw (pre-resistance/bonus)
+This is a script I wrote to compute the average raw (pre-resistance/bonus)
 DPS of a given weapon build in the game Warframe.  In general, the logic
 should work simillarly for most other shooter games, although I provide
 no guarantee of the quality of the results for other usage.
@@ -57,27 +57,33 @@ def compute_dps(stats):
        stats should be a dict similar to what is returned by
        argparse.ArgumentParser.parse_args()'''
     # This checks for red crit values, and adjusts numbers accordingly
+    # In essence, it converts things so what is normally calculating for crits
+    # is calculating for red crits.
     if stats.critchance > 1:
         stats.critchance = stats.critchance - 1
         stats.dmg = stats.dmg * stats.critmult
         stats.critmult = 2
-    # Relatively simple math here for average per-shot damage, we take the
-    # weighted average of the crit and non-crit damage.
+    # This is some relatively simple math.  It pretty much takes the percentage
+    # of time you don't crit, the percentage you do, and the damage for each,
+    # and combines them in a weighted average.
     avgperpellet = ((stats.dmg / stats.multishot) * (1 - stats.critchance)) + ((stats.dmg / stats.multishot) * stats.critchance * stats.critmult)
+    # This is even simpler, we take the per bullet damage computed above and
+    # multiply it by the number of bullets in a single shot.
     avgpershot = avgperpellet * stats.multishot
     if stats.firerate > 0:
         # If we didn't get the reload time and magazine size, then the average
-        # DPS is just the per-shot times the firerate
+        # DPS is just the per-shot damage times the firerate.
         avgdps = avgpershot * stats.firerate
         if (stats.reload and stats.reload > 0) and stats.magazine:
-            # Here, we compute how long it takes to empty the magazine, and
-            # factor in reload time (which is functionally a period of 0 DPS)
+            # Here, we compute how long it takes to empty the magazine
             magtime = stats.magazine / stats.firerate
+            # And this uses the ratio of reload time to the time it takes to
+            # empty the magazine to adjust the DPS value accordingly.
             avgdps = avgdps / ((stats.reload / magtime) + 1)
     else:
         # In this case, we've been told to ignore fire rate.  If we have the
         # reload time, the DPS is the per-shot times the magazine size, divided
-        # by the reload time, otherwise it's jus tthe per-shot damage.
+        # by the reload time, otherwise it's just the per-shot damage.
         if stats.reload and stats.reload > 0:
             avgdps = avgpershot * stats.magazine / stats.reload
         else:
@@ -85,6 +91,7 @@ def compute_dps(stats):
     return (avgperpellet, avgpershot, avgdps)
 
 def main():
+    '''Boring stuff just to wrap the function above so it's usable as a script.'''
     import argparse
     parser = argparse.ArgumentParser(description='Comput a weapon\'s average DPS')
     parser.add_argument('--dmg', '--damage', help='Base damage vaule.  This is the sum of the individual damage types for the weapon', type=float, required=True)
@@ -104,6 +111,7 @@ def main():
     print('Average per-shot damage; {0:.2F}'.format(result[1]))
     print('Average DPS: {0:.2F}'.format(result[2]))
     print('Results do not factor in resistances, bonuses, or armor')
+    print('Values may also be off for weapons without full-auto firing mechanisms (the values here will be the theoretical best possible average DPS for such weapons)')
     exit(0)
 
 if __name__ == '__main__':
