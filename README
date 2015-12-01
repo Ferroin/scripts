@@ -16,3 +16,4 @@ cp.sh           Simple script to copy a file.  Has a much smaller memory
 getkeys.sh      Simple script to get keystrokes from a input device
                 on Linux.  Needs 'input-events' from the input-tools
                 package.
+wfdps.py        A python script for computing weapon DPS for Warframe.
