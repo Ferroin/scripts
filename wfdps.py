@@ -59,14 +59,15 @@ def compute_dps(stats):
     # This checks for red crit values, and adjusts numbers accordingly
     # In essence, it converts things so what is normally calculating for crits
     # is calculating for red crits.
-    if stats.critchance > 1:
-        stats.critchance = stats.critchance - 1
+    if stats.critchance > 100:
+        stats.critchance = stats.critchance - 100
         stats.dmg = stats.dmg * stats.critmult
         stats.critmult = 2
+    critchance = stats.critchance / 100
     # This is some relatively simple math.  It pretty much takes the percentage
     # of time you don't crit, the percentage you do, and the damage for each,
     # and combines them in a weighted average.
-    avgperpellet = ((stats.dmg / stats.multishot) * (1 - stats.critchance)) + ((stats.dmg / stats.multishot) * stats.critchance * stats.critmult)
+    avgperpellet = ((stats.dmg / stats.multishot) * (1 - critchance)) + ((stats.dmg / stats.multishot) * critchance * stats.critmult)
     # This is even simpler, we take the per bullet damage computed above and
     # multiply it by the number of bullets in a single shot.
     avgpershot = avgperpellet * stats.multishot
@@ -95,12 +96,12 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description='Comput a weapon\'s average DPS')
     parser.add_argument('--dmg', '--damage', help='Base damage vaule.  This is the sum of the individual damage types for the weapon', type=float, required=True)
-    parser.add_argument('--critchance', help='Base crit chance, expressed as faction between 0 and 1 (divide the percentage by 100 to get this)', type=float, required=True)
+    parser.add_argument('--critchance', help='Critical hit chance, expressed as a percentage without the % sign', type=float, required=True)
     parser.add_argument('--critmult', help='Critical dmage multiplier', type=float, required=True)
     parser.add_argument('--firerate', help='Fire rate in shots per second, specify 0 here for weapons like the Tigris that are unaffected by fire rate', type=float, required=True)
     parser.add_argument('--magazine', help='Magazine size', type=int)
     parser.add_argument('--reload', help='Reload speed, in seconds, specify 0 here for stuff that does not need reloaded', type=float)
-    parser.add_argument('--multishot', help='Number of individual projectiles.  Damage is assumed to be divided evenly between them.  Check the warframe wiki for a list of pellet counts for shotguns.  For other weapons with a single projectile, this should be the percentage multishot bonus divided by 100, plus 1.', type=float, default=1)
+    parser.add_argument('--multishot', help='Number of individual projectiles.  Damage is assumed to be divided evenly between them.  Check the warframe wiki for a list of pellet counts for shotguns, then add the % multishot bonus divided by 100.  For other weapons with a single projectile, this should be the percentage multishot bonus divided by 100, plus 1.', type=float, default=1)
     args = parser.parse_args()
     if ((args.reload and not args.magazine) or \
        (args.magazine and not args.reload)):
