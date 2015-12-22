@@ -64,3 +64,4 @@ if [ ! -e /etc/keys/efi/db.crt ] ; then
 fi
 cert-to-efi-sig-list -g "$(uuidgen)" /etc/keys/efi/PK.crt /etc/keys/efi/PK.esl
 sign-efi-sig-list -k /etc/keys/efi/PK.key -c /etc/keys/efi/PK.crt /etc/keys/efi/PK /etc/keys/efi/PK.esl /etc/keys/efi/PK.auth
+cat /etc/keys/efi/PK.crt /etc/keys/efi/KEK.crt /etc/keys/efi/db.crt > /etc/keys/efi.pem
