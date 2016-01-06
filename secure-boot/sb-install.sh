@@ -36,10 +36,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 echo "Initializing KEK."
 efi-updatevar -e -f /etc/keys/efi/old_KEK.esl KEK
-efi-updatevar -a -c /etc/keys/efi/KEK.crt
+efi-updatevar -a -c /etc/keys/efi/KEK.crt KEK
 echo "Initializing db."
 efi-updatevar -e -f /etc/keys/efi/old_db.esl db
-efi-updatevar -a -c /etc/keys/efi/db.crt
+efi-updatevar -a -c /etc/keys/efi/db.crt db
 echo "Initializing dbx."
 efi-updatevar -e -f /etc/keys/efi/old_dbx.esl dbx
 echo "Asserting machine ownership and switching to user mode."
