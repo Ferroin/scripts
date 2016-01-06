@@ -13,6 +13,8 @@ check LICENSE for details.
 Here's a short list of what's here:
 cp.sh           Simple script to copy a file.  Has a much smaller memory
                 footprint than regular cp.
+gen-ucode-cpio  A simple script to generate a microcode archive for Xen
+                or Linux
 getkeys.sh      Simple script to get keystrokes from a input device
                 on Linux.  Needs 'input-events' from the input-tools
                 package.

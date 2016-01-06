@@ -1,0 +1,49 @@
+#!/bin/sh
+# gen-ucode-cpio.sh: Generate a CPIO archive with processor microcode for an x86 system.
+#
+# This is a really simple script to generate a CPIO archive of processor
+# microcode in the format expected by both Xen and Linux's early microcode
+# loader on x86.
+#
+# Copyright (c) 2016, Austin S. Hemmelgarn
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. The name of Austin S. Hemmelgarn may not be used to endorse or promote
+#    products derived from this software without specific prior written
+#    permission.  For permission or any legal details, please contact
+#    ahferroin7@gmail.com.
+# 4. Redistributions of any form whatsoever must retain the following
+#    acknowledgment: "This product includes software developed by
+#    Austin S. Hemmelgarn."
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+mkdir initrd
+pushd initrd
+mkdir -p kernel/x86/microcode
+if [ -d /lib/firmware/intel-ucode ] ; then
+    cat /lib/firmware/intel-ucode/* > kernel/x86/microcode/GenuineIntel.bin
+fi
+if [ -d /lib/firmware/amd-ucode ] ; then
+    cat /lib/firmware/amd-ucode/*.bin > kernel/x86/microcode/AuthenticAMD.bin
+fi
+find . | cpio -o -H newc > ../ucode.cpio
+popd
+rm -rf initrd
