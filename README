@@ -19,4 +19,6 @@ getkeys.sh      Simple script to get keystrokes from a input device
                 on Linux.  Needs 'input-events' from the input-tools
                 package.
 secure-boot     A couple of scripts to simplify setting up UEFI Secure Boot
+win-reg         A couple of specific registry changes for Windows,
+                check the README in that directory for specifics.
 wfdps.py        A python script for computing weapon DPS for Warframe.
