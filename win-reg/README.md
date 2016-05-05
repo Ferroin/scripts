@@ -1,16 +1,17 @@
+# Overview
 This folder contains a couple of files for making specific modifications
 to the Windows Registry.  I only have ones to add the changes, not remove
 them, as I don't usually need to remove them on my systems, and it's
 not hard to figure out what to change if you look at the files themselves.
 
-# List of current Files
+# List of current files
 ## disable-fast-boot.reg
 This disables 'Fast Boot' on Windows 8, 8.1, and 10.  This feature
 doesn't work on some older hardware (the symptom is that your computer
 doesn't shut down when you tell it to unless you run 'stop-computer'
 from an administrative powershell session).  It can also interfere
 with multi-boot setups involving OS'es that don't support it (which is
-everything except the above mentioned Windows versions.
+everything except the above mentioned Windows versions).
 
 ## rtc-is-utc.reg
 This makes Windows treat the hardware RTC as if it's set to UTC instead
