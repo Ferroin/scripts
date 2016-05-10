@@ -40,9 +40,9 @@ still allowing usage of existing software (I wrote them so I could get
 Linux booting under Secure Boot, and still boot Windows, and not have
 to re-sign the WIndows loader every time Windows decided to update it).
 
-## win-reg
-A couple of specific registry changes for Windows, check the README in
-that directory for specifics.
+## windows
+A couple of Windows specific scripts and registry files, check the README
+there for more info.
 
 ## wfdps.py
 This is a Python script for computing damage-per-second for weapons in

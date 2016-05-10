@@ -5,6 +5,11 @@ them, as I don't usually need to remove them on my systems, and it's
 not hard to figure out what to change if you look at the files themselves.
 
 # List of current files
+## disable-auto-app-install.reg
+This will disable the automatic unattended unsolicited installation
+by Windows 10 (even if the Store has been uninstalled) of seemingly
+random crap.
+
 ## disable-fast-boot.reg
 This disables 'Fast Boot' on Windows 8, 8.1, and 10.  This feature
 doesn't work on some older hardware (the symptom is that your computer
@@ -12,6 +17,11 @@ doesn't shut down when you tell it to unless you run 'stop-computer'
 from an administrative powershell session).  It can also interfere
 with multi-boot setups involving OS'es that don't support it (which is
 everything except the above mentioned Windows versions).
+
+## disable-one-drive.reg
+This will prevent OneDrive from being show in the File Explorer side-pane.
+To actually uninstall OneDrive, check uninstall-onedrive.ps1 from the
+next directory up.
 
 ## rtc-is-utc.reg
 This makes Windows treat the hardware RTC as if it's set to UTC instead
