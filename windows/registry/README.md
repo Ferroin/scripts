@@ -6,20 +6,24 @@ not hard to figure out what to change if you look at the files themselves.
 
 # List of current files
 ## disable-auto-app-install.reg
-This will disable the automatic unattended unsolicited installation
-by Windows 10 (even if the Store has been uninstalled) of seemingly
-random crap.
+This will disable the 'App Discovery' function in Windows 10.
+This particular bit of malware (which Microsoft calls a feature) will
+randomly install top rated apps from the Windows Store, even if the
+Windows Store is not available on the system.  Technically, you can
+disable this manually by switching off 'Suggestions' in the Start menu
+settings, but this instead completely disables it and prevents it from
+being turned on in the setting sapp.
 
 ## disable-fast-boot.reg
-This disables 'Fast Boot' on Windows 8, 8.1, and 10.  This feature
-doesn't work on some older hardware (the symptom is that your computer
-doesn't shut down when you tell it to unless you run 'stop-computer'
-from an administrative powershell session).  It can also interfere
-with multi-boot setups involving OS'es that don't support it (which is
-everything except the above mentioned Windows versions).
+This disables 'Fast Boot' on Windows 8, 8.1, and 10.  This feature doesn't
+work on some older hardware (the symptom is that your computer doesn't
+shut down when you tell it to unless you run 'stop-computer' from an
+administrative powershell session).  It can also interfere with UEFI
+based multi-boot configurations involving OS'es that don't support it
+(which is everything except the above mentioned Windows versions).
 
 ## disable-one-drive.reg
-This will prevent OneDrive from being show in the File Explorer side-pane.
+This will prevent OneDrive from being shown in the File Explorer side-pane.
 To actually uninstall OneDrive, check uninstall-onedrive.ps1 from the
 next directory up.
 
@@ -27,14 +31,16 @@ next directory up.
 This makes Windows treat the hardware RTC as if it's set to UTC instead
 of the local timezone.  This is particularly useful if you are dual
 booting with almost any other OS in existence (especially UNIX-like
-ones), as Windows is about the only OS that expects the RTC to be set
-to the local timezone.  It can also prevent issues on laptops which are
-set to automatically set the timezone when traveling between timezones
-while the system is off.
+ones), as Windows is the only widely used OS that expects the RTC to
+be set to the local timezone.  It can also prevent issues on laptops
+which are set to automatically set the timezone when traveling between
+timezones while the system is off.
 
 ## user-tcp-qos.reg
 This overrides the default behavior in Windows 7 and newer of blatantly
 ignoring application's attempts to set the QoS on their network traffic.
 It's probably not hugely useful for most people, but it can improve
-networking behavior when you have a good ISP who actually honors the
-DSCP fields in IP headers (sadly a decent percentage of them don't).
+networking behavior when you have a good ISP who actually honors the DSCP
+fields in IP headers (sadly a decent percentage of them don't appear to).
+I find that this can improve network latency while you are streaming in
+the background or doing big transfers of data.
