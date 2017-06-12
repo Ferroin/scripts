@@ -73,6 +73,14 @@ _TOP = '\x1b[H'
 # characters, uncomment the line below.
 #_TOP += '\x1b2J'
 
+def prepare_screen():
+    '''Prepare the screen by writing out blanks across the display area.'''
+    size = shutil.get_terminal_size()
+    sys.stdout.write(_COLOR_SEQUENCE + _TOP)
+    for l in range(0, size[1] - 1):
+        sys.stdout.write((' ' * size[0]) + _NL)
+    sys.stdout.write(' ' * (size[0] - 1))
+
 def compose_clock(t):
     '''This computes the clock display for the given bit array.
 
@@ -82,7 +90,7 @@ def compose_clock(t):
     lines = (size[1] - (4 * _VSEP)) // 3
     columns = (size[0] - (7 * _HSEP)) // 6
     bits = get_bit_array(t)
-    result = _COLOR_SEQUENCE + _TOP + (' ' * (columns * 6 + _HSEP * 7)) + _NL
+    result = _COLOR_SEQUENCE + _TOP + _NL
     for row in range(0, 3):
         for line in range(0, lines):
             result += ' ' * _HSEP
@@ -93,7 +101,7 @@ def compose_clock(t):
                     result += (' ' * columns) + (' ' * _HSEP)
             result += ' ' + _NL
         for i in range(0, _VSEP):
-            result += (' ' * (columns * 6 + _HSEP * 7)) + _NL
+            result += _NL
     return result
 
 def get_bit_array(t):
@@ -120,6 +128,7 @@ def display_clock(signum, frame):
     return True
 
 if __name__ == '__main__':
+    prepare_screen()
     signal.signal(signal.SIGALRM, display_clock)
     signal.setitimer(signal.ITIMER_REAL, 0.5, 1)
     while True:
