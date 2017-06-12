@@ -42,3 +42,9 @@ binary clock format where each digit of the time in 24-hour format
 is represented as a vertically stacked binary number with the least
 significant bit at the bottom.  It will automatically handle terminal
 resizing if possible.  Depends on Python 3.
+
+## termclock.py
+Pretty much the same as termclock\_classic.py, except this one uses one
+binary number each for hours, minutes, and seconds, arranged in 3 rows
+instead of six columns, with the leaast significant bit on the right.
+Depends on Python 3.

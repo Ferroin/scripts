@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-'''termclock_classic.py: An ASCII-art binary clock for your terminal.
+'''termclock.py: An ASCII-art binary clock for your terminal.
 
-Usage: termclock_classic.py
+Usage: termclock.py
 
 Hit Ctrl-C to exit.
 
@@ -67,16 +67,17 @@ def clear_terminal():
     '''Clear the terminal.'''
     return sys.stdout.write('\x1b[0m\x1b[2J\x1b[f')
 
-def compose_classic_clock(t):
+def compose_clock(t):
     '''This computes the clock display for the given bit array.
 
-       This one gives a traditional one column per digit binary clock.'''
+       This one gives one row each for hours, minutes, and seconds,
+       using a 6-bit binary number to represent the value of each.'''
     size = shutil.get_terminal_size()
-    lines = (size[1] - (5 * _VSEP)) // 4
+    lines = (size[1] - (4 * _VSEP)) // 3
     columns = (size[0] - (7 * _HSEP)) // 6
-    bits = get_bit_array_classic(t)
+    bits = get_bit_array(t)
     result = _COLOR_SEQUENCE + (' ' * (columns * 6 + _HSEP * 7)) + '\n'
-    for row in range(3, -1, -1):
+    for row in range(0, 3):
         for line in range(0, lines):
             result += ' ' * _HSEP
             for column in range(0, 6):
@@ -89,26 +90,25 @@ def compose_classic_clock(t):
             result += (' ' * (columns * 6 + _HSEP * 7)) + '\n'
     return result
 
-def get_bit_array_classic(t):
-    '''Return a bit array for compose_classic_clock() from the given time.'''
-    bits = [[], [], [], []]
-    digits = [
-        (t.tm_hour - (t.tm_hour % 10)) // 10,
-        t.tm_hour % 10,
-        (t.tm_min - (t.tm_min % 10)) // 10,
-        t.tm_min % 10,
-        (t.tm_sec - (t.tm_sec % 10)) // 10,
-        t.tm_sec % 10
+def get_bit_array(t):
+    '''Return a bit array for compose_clock() from the given time.'''
+    bits = [
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0]
     ]
-    for item in digits:
-        bits[0].append(item & 0x01)
-        bits[1].append((item & 0x02) >> 1)
-        bits[2].append((item & 0x04) >> 2)
-        bits[3].append((item & 0x08) >> 3)
+    digits = [
+        t.tm_hour,
+        t.tm_min,
+        t.tm_sec
+    ]
+    for item in range(0, 3):
+        for index in range(6, 0, -1):
+            bits[item][5 - (index - 1)] = (digits[item] & (1 << index)) >> index
     return bits
 
 while True:
     clear_terminal()
-    sys.stdout.write(compose_classic_clock(time.localtime()))
+    sys.stdout.write(compose_clock(time.localtime()))
     termios.tcdrain(sys.stdout.fileno())
-    time.sleep(1)
+    time.sleep(0.1)
