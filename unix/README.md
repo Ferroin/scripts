@@ -34,3 +34,11 @@ much any other similar fake keyboard.  Because of how it works, things
 that return control keycodes will probably not work as expected and may
 need post-processing.  Depends on 'input-events' from the input-tools
 package.
+
+## termclock\_classic.py
+This python script will produce a large ASCII-art binary clock on the
+terminal.  This version uses the 'classic' mathematically incorrect
+binary clock format where each digit of the time in 24-hour format
+is represented as a vertically stacked binary number with the least
+significant bit at the bottom.  It will automatically handle terminal
+resizing if possible.  Depends on Python 3.
