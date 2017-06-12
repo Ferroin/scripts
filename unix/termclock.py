@@ -68,7 +68,10 @@ _HSEP = 2
 # clear it, and hwo to return to the top of the screen and clear the
 # entire screen.
 _NL = '\x1b[1E\x1b[K'
-_TOP = '\x1b[H\x1b[2J'
+_TOP = '\x1b[H'
+# If you have an ancient terminal that overtypes instead of replacing
+# characters, uncomment the line below.
+#_TOP += '\x1b2J'
 
 def compose_clock(t):
     '''This computes the clock display for the given bit array.
