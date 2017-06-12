@@ -63,9 +63,11 @@ _VSEP = 1
 # Same, just horizontally.
 _HSEP = 2
 
-def clear_terminal():
-    '''Clear the terminal.'''
-    return sys.stdout.write('\x1b[0m\x1b[2J\x1b[f')
+# These dictate how to move to the beginning of the next line and
+# clear it, and hwo to return to the top of the screen and clear the
+# entire screen.
+_NL = '\x1b[1E\x1b[K'
+_TOP = '\x1b[H\x1b[2J'
 
 def compose_classic_clock(t):
     '''This computes the clock display for the given bit array.
@@ -75,7 +77,7 @@ def compose_classic_clock(t):
     lines = (size[1] - (5 * _VSEP)) // 4
     columns = (size[0] - (7 * _HSEP)) // 6
     bits = get_bit_array_classic(t)
-    result = _COLOR_SEQUENCE + (' ' * (columns * 6 + _HSEP * 7)) + '\n'
+    result = _COLOR_SEQUENCE + _TOP + (' ' * (columns * 6 + _HSEP * 7)) + _NL
     for row in range(3, -1, -1):
         for line in range(0, lines):
             result += ' ' * _HSEP
@@ -84,9 +86,9 @@ def compose_classic_clock(t):
                     result += (_BOX * columns) + (' ' * _HSEP)
                 else:
                     result += (' ' * columns) + (' ' * _HSEP)
-            result += ' \n'
+            result += ' ' + _NL
         for i in range(0, _VSEP):
-            result += (' ' * (columns * 6 + _HSEP * 7)) + '\n'
+            result += (' ' * (columns * 6 + _HSEP * 7)) + _NL
     return result
 
 def get_bit_array_classic(t):
@@ -108,7 +110,6 @@ def get_bit_array_classic(t):
     return bits
 
 while True:
-    clear_terminal()
     sys.stdout.write(compose_classic_clock(time.localtime()))
     termios.tcdrain(sys.stdout.fileno())
     time.sleep(1)
