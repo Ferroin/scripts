@@ -39,6 +39,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 import os
 import shutil
+import signal
 import sys
 import termios
 import time
@@ -105,11 +106,18 @@ def get_bit_array(t):
         t.tm_sec
     ]
     for item in range(0, 3):
-        for index in range(6, 0, -1):
-            bits[item][5 - (index - 1)] = (digits[item] & (1 << index)) >> index
+        for index in range(5, -1, -1):
+            bits[item][5 - index] = (digits[item] & (1 << index)) >> index
     return bits
 
-while True:
+def display_clock(signum, frame):
+    '''Get the current time and write out the clock.'''
     sys.stdout.write(compose_clock(time.localtime()))
     termios.tcdrain(sys.stdout.fileno())
-    time.sleep(0.8)
+    return True
+
+if __name__ == '__main__':
+    signal.signal(signal.SIGALRM, display_clock)
+    signal.setitimer(signal.ITIMER_REAL, 0.5, 1)
+    while True:
+        signal.pause()
