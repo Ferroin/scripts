@@ -25,7 +25,7 @@ TODO:
     * Add support for handling weapons where ammo consumption doesn't
       equate to damage rate (Glaxion and friends).
 
-Copyright (c) 2015, Austin S. Hemmelgarn
+Copyright (c) 2015,2017, Austin S. Hemmelgarn
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -106,12 +106,12 @@ def main():
     '''Boring stuff just to wrap the function above so it's usable as a script.'''
     import argparse
     parser = argparse.ArgumentParser(description='Comput a weapon\'s average DPS', epilog='Results do not factor in any bonuses for different dmage types or dmage resistance from armor.  Results for weapons that are not fully automatic will also be off (the returned values for such weapons are theoretical maximums).  We currently do not directly handle weapons that deal damage at a different rate than they fire.  You can account for such weapons by scaling the magazine size so that it equals the number of damage ticks the weapon deals while emptying it\'s magazine.')
-    parser.add_argument('--dmg', '--damage', help='Base damage vaule.  This is the sum of the individual damage types for the weapon.', type=float, required=True)
+    parser.add_argument('--dmg', '--damage', help='Base damage value.  This is the sum of the individual damage types for the weapon.', type=float, required=True)
     parser.add_argument('--critchance', help='Critical hit chance, expressed as a percentage without the %% sign.', type=float, required=True)
-    parser.add_argument('--critmult', help='Critical dmage multiplier.', type=float, required=True)
+    parser.add_argument('--critmult', help='Critical damage multiplier.', type=float, required=True)
     parser.add_argument('--firerate', help='Fire rate in shots per second, or attack speed for melee weapons. Specify 0 here for weapons like the Tigris that are unaffected by fire rate.', type=float, required=True)
     parser.add_argument('--magazine', help='Magazine size.', type=int)
-    parser.add_argument('--reload', help='Reload speed, in seconds, specify 0 here for stuff that does not need reloaded.', type=float)
+    parser.add_argument('--reload', help='Reload speed, in seconds, specify 0 here for stuff that does not need to be reloaded.', type=float)
     parser.add_argument('--multishot', help='Number of individual projectiles.  Damage is assumed to be divided evenly between them.  Check the Warframe wiki for a list of pellet counts for shotguns, then multiply that by the %% multishot bonus divided by 100.  For other weapons with a single projectile, this should be the percentage multishot bonus divided by 100, plus 1.', type=float, default=1)
     parser.add_argument('--channelmult', help='Channeling damage multiplier for melee weapons.', type=float)
     args = parser.parse_args()
@@ -124,7 +124,7 @@ def main():
         exit(1)
     result = compute_dps(args)
     if not args.channelmult:
-        print('Average per-bullet damage: {0:.2F}'.format(result[0]))
+        print('Average per-projectile damage: {0:.2F}'.format(result[0]))
     print('Average per-shot damage; {0:.2F}'.format(result[1]))
     print('Average DPS: {0:.2F}'.format(result[2]))
     if (args.channelmult):
