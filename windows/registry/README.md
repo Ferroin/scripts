@@ -12,7 +12,9 @@ randomly install top rated apps from the Windows Store, even if the
 Windows Store is not available on the system.  Technically, you can
 disable this manually by switching off 'Suggestions' in the Start menu
 settings, but this instead completely disables it and prevents it from
-being turned on in the setting sapp.
+being turned on in the settings app.  This also disables the display of
+'suggested' conent in the Settings app, and the mechanisms used to
+pre-load third-party apps when you install or upgrade Windows.
 
 ## disable-fast-boot.reg
 This disables 'Fast Boot' on Windows 8, 8.1, and 10.  This feature doesn't
